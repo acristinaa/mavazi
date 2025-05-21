@@ -22,8 +22,8 @@ const ClothingCard = ({ imageUrl, name, owner, size }: ClothingCardProps) => {
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
         <View style={styles.details}>
-          <Text style={styles.owner}>{owner}</Text>
-          <Text style={styles.size}>{size}</Text>
+          <Text style={styles.owner}>Owner: {owner}</Text>
+          <Text style={styles.size}>Size: {size}</Text>
         </View>
       </View>
     </View>
@@ -58,18 +58,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 8,
+    alignSelf: "center",
   },
   details: {
     flexDirection: "column",
     justifyContent: "space-between",
   },
   owner: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 16,
+    color: "#000000",
   },
   size: {
     fontSize: 14,
-    fontWeight: "500",
+    color: "#000000",
   },
 });
 
