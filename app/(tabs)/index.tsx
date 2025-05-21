@@ -29,7 +29,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <View style={styles.sectionContent}>
           <Text style={styles.sectionTitle}>My Clothes</Text>
-          <TouchableOpacity style={styles.clothesContainer} onPress={() => router.push()}>
+          <TouchableOpacity style={styles.clothesContainer} onPress={() => router.push("/my-closet-page")}>
             <MaterialCommunityIcons name="wardrobe-outline" size={100} color="black" />
           </TouchableOpacity>
         </View>
@@ -38,7 +38,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <View style={styles.sectionContent}>
           <Text style={styles.sectionTitle}>Upload clothes</Text>
-          <TouchableOpacity style={styles.clothesContainer} onPress={() => router.push()}>
+          <TouchableOpacity style={styles.clothesContainer} onPress={() => router.push("/upload-page")}>
             <AntDesign name="upload" size={90} color="black" />
           </TouchableOpacity>
         </View>
