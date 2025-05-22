@@ -1,10 +1,10 @@
 import { animated, useSprings } from "@react-spring/native";
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.25;
+const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.15;
 
 export type SwipeDirection = "left" | "right";
 
@@ -58,78 +58,97 @@ export default forwardRef<CardStackHandle, CardStackProps<any>>(function CardSta
         rot: dir === "left" ? -45 : 45,
         scale: 1,
         y: 0,
-        config: { tension: 300, friction: 20 },
-        onResolve: () => onSwipe(dir, data[i]),
+        config: { tension: 500, friction: 25 },
+        onRest: () => onSwipe(dir, data[i]),
       };
     });
   };
 
-  const onGestureEvent = (cardIndex: number) => (event: any) => {
-    const { translationX, velocityX } = event.nativeEvent;
-    const down = event.nativeEvent.state === 2; // State.ACTIVE
+  const onGestureEvent = (cardIndex: number) => ({ nativeEvent }: any) => {
+    const { translationX } = nativeEvent;
     
-    api.start((sprIdx) => {
-      if (sprIdx !== cardIndex) return;
+    api.start((i) => {
+      if (i !== cardIndex) return;
       
-      const dir = translationX < 0 ? -1 : 1; // -1 = left, 1 = right
+      const dir = translationX < 0 ? -1 : 1;
       const isGone = gone.has(cardIndex);
-      const x = isGone ? (SCREEN_WIDTH + 100) * dir : down ? translationX : 0;
-      const rot = translationX / 10;
-      const scale = down ? 1.05 : 1;
+      const x = isGone ? (SCREEN_WIDTH + 100) * dir : translationX;
+      const rot = translationX / 15;
       
-      return { x, rot, scale, immediate: down };
+      return { 
+        x, 
+        rot, 
+        scale: 1.02, 
+        immediate: true 
+      };
     });
   };
 
-  const onGestureEnd = (cardIndex: number) => (event: any) => {
-    const { translationX, velocityX } = event.nativeEvent;
-    const dir = translationX < 0 ? -1 : 1; // -1 = left, 1 = right
+  const onGestureStateChange = (cardIndex: number) => ({ nativeEvent }: any) => {
+    const { state, translationX, velocityX } = nativeEvent;
     
-    if (Math.abs(velocityX) > 0.25 || Math.abs(translationX) > SWIPE_THRESHOLD) {
-      gone.add(cardIndex);
-      flyOut(dir === 1 ? "right" : "left");
-    } else {
-      // Return to center if not swiped far enough
-      api.start(i => {
-        if (i !== cardIndex) return;
-        return { x: 0, rot: 0, scale: 1, immediate: false };
-      });
+    if (state === State.END) {
+      const dir = translationX < 0 ? -1 : 1;
+      
+      if (Math.abs(translationX) > SWIPE_THRESHOLD || Math.abs(velocityX) > 0.2) {
+        gone.add(cardIndex);
+        const swipeDirection = dir === 1 ? "right" : "left";
+        
+        api.start((i) => {
+          if (i !== cardIndex) return;
+          return {
+            x: dir === 1 ? SCREEN_WIDTH * 1.1 : -SCREEN_WIDTH * 1.1,
+            rot: dir === 1 ? 45 : -45,
+            config: { tension: 500, friction: 25 },
+            onRest: () => onSwipe(swipeDirection, data[i]),
+          };
+        });
+      } else {
+        api.start(i => {
+          if (i !== cardIndex) return;
+          return { 
+            x: 0, 
+            rot: 0, 
+            scale: 1, 
+            config: { tension: 500, friction: 25 } 
+          };
+        });
+      }
     }
   };
 
   return (
     <>
       {springs.map(({ x, y, rot, scale }, i) => {
-                                // Reverse the display order so cards at the beginning of the array 
-                // are displayed on top
-                const displayIndex = data.length - 1 - i;
-                const isActive = displayIndex === data.length - 1 - gone.size;
+        const displayIndex = data.length - 1 - i;
+        const isActive = displayIndex === data.length - 1 - gone.size;
         
-                return (
-                  <PanGestureHandler
-                    key={displayIndex}
-                    enabled={isActive}
-                    onGestureEvent={isActive ? onGestureEvent(i) : undefined}
-                    onHandlerStateChange={isActive ? onGestureEnd(i) : undefined}
-                  >
-                    <animated.View
-                      style={[
-                        styles.card,
-                        {
-                          transform: [
-                            { translateX: x },
-                            { translateY: y },
-                            { rotate: rot.to(r => `${r}deg`) },
-                            { scale },
-                          ],
-                          zIndex: data.length - displayIndex,
-                        },
-                      ]}
-                    >
-                      {renderCard({...data[displayIndex], index: displayIndex})}
-                    </animated.View>
-                  </PanGestureHandler>
-                );
+        return (
+          <PanGestureHandler
+            key={displayIndex}
+            activeOffsetX={[-10, 10]}
+            failOffsetY={[-10, 10]}
+            onGestureEvent={onGestureEvent(i)}
+            onHandlerStateChange={onGestureStateChange(i)}
+          >
+            <animated.View
+              style={[
+                styles.card,
+                {
+                  transform: [
+                    { translateX: x },
+                    { translateY: y },
+                    { rotate: rot.to(r => `${r}deg`) },
+                    { scale },
+                  ],
+                  zIndex: data.length - displayIndex,
+                },
+              ]}
+            >
+              {renderCard({...data[displayIndex], index: displayIndex})}
+            </animated.View>
+          </PanGestureHandler>
+        );
       })}
     </>
   );

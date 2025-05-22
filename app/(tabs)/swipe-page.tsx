@@ -5,6 +5,7 @@ import { Colors } from "@/constants/Colors";
 import { supabase } from "@/lib/supabaseClient";
 import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type ClothingItem = {
   id: string;
@@ -43,39 +44,41 @@ export default function SwipePage() {
   if (!items.length) return <Text>Loading…</Text>;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Time to swap!</Text>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Time to swap!</Text>
 
-      <View style={styles.cardContainer}>
-        <CardStack
-          ref={deckRef}
-          data={items}
-          renderCard={(item) => (
-            <ClothingCard
-              imageUrl={item.image_url}
-              name={item.name}
-              owner={item.owner}
-              size={item.size}
-              index={item.index}
-            />
-          )}
-          onSwipe={handleSwipe}
-        />
-      </View>
+        <View style={styles.cardContainer}>
+          <CardStack
+            ref={deckRef}
+            data={items}
+            renderCard={(item) => (
+              <ClothingCard
+                imageUrl={item.image_url}
+                name={item.name}
+                owner={item.owner}
+                size={item.size}
+                index={item.index}
+              />
+            )}
+            onSwipe={handleSwipe}
+          />
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <SwipeButton
-          icon="thumbs-down"
-          onPress={() => deckRef.current?.swipeLeft()}
-          size={85}
-        />
-        <SwipeButton
-          icon="cards-heart-outline"
-          onPress={() => deckRef.current?.swipeRight()}
-          size={85}
-        />
+        <View style={styles.buttonContainer}>
+          <SwipeButton
+            icon="thumbs-down"
+            onPress={() => deckRef.current?.swipeLeft()}
+            size={85}
+          />
+          <SwipeButton
+            icon="cards-heart-outline"
+            onPress={() => deckRef.current?.swipeRight()}
+            size={85}
+          />
+        </View>
       </View>
-    </View>
+    </GestureHandlerRootView>
   );
 }
 

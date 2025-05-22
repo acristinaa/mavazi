@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 
 interface SwipeButtonProps {
   onPress: () => void;
@@ -10,40 +10,37 @@ interface SwipeButtonProps {
 }
 
 export const SwipeButton = ({ onPress, icon, size = 50 }: SwipeButtonProps) => {
-  const Icon =
-    icon === "thumbs-down"
-      ? MaterialCommunityIcons
-      : MaterialCommunityIcons;
-
   const iconName = icon === "thumbs-down" ? "thumb-down" : "cards-heart-outline";
+  const iconColor = icon === "thumbs-down" ? Colors.light.darkPink : Colors.light.dubaiChocolate;
+  const borderColor = icon === "thumbs-down" ? Colors.light.darkPink : Colors.light.dubaiChocolate;
 
   return (
-    <TouchableOpacity
-      style={[styles.button, icon === "thumbs-down" ? styles.dontLikeButton : styles.likeButton, { width: size, height: size }]}
+    <TouchableWithoutFeedback
       onPress={onPress}
+      hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
     >
-      <Icon
-        name={iconName}
-        size={size * 0.55}
-        color={icon === "thumbs-down" ? Colors.light.darkPink : Colors.light.dubaiChocolate}
-      />
-    </TouchableOpacity>
+      <View
+        style={[
+          styles.button,
+          { borderColor, width: size, height: size }
+        ]}
+      >
+        <MaterialCommunityIcons
+          name={iconName}
+          size={size * 0.55}
+          color={iconColor}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 50,
+    borderRadius: 100,
     borderWidth: 2,
-    borderColor: Colors.light.dubaiChocolate,
     backgroundColor: Colors.light.white,
     justifyContent: "center",
     alignItems: "center",
-  },
-  dontLikeButton: {
-    borderColor: Colors.light.darkPink,
-  },
-  likeButton: {
-    borderColor: Colors.light.dubaiChocolate,
-  },
+  }
 });
