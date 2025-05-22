@@ -1,24 +1,33 @@
 import { Colors } from "@/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Feather from '@expo/vector-icons/Feather';
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 interface SwipeButtonProps {
   onPress: () => void;
+  icon: "thumbs-down" | "cards-heart-outline";
   size?: number;
 }
 
-export const SwipeButton = ({ onPress, size = 50 }: SwipeButtonProps) => {
+export const SwipeButton = ({ onPress, icon, size = 50 }: SwipeButtonProps) => {
+  const Icon =
+    icon === "thumbs-down"
+      ? MaterialCommunityIcons
+      : MaterialCommunityIcons;
+
+  const iconName = icon === "thumbs-down" ? "thumb-down" : "cards-heart-outline";
+
   return (
-    <>
-    <TouchableOpacity style={[styles.button, styles.dontLikeButton, { width: size, height: size }]} onPress={onPress}>
-      <Feather name="thumbs-down" size={48} color={Colors.light.darkPink} />
+    <TouchableOpacity
+      style={[styles.button, icon === "thumbs-down" ? styles.dontLikeButton : styles.likeButton, { width: size, height: size }]}
+      onPress={onPress}
+    >
+      <Icon
+        name={iconName}
+        size={size * 0.55}
+        color={icon === "thumbs-down" ? Colors.light.darkPink : Colors.light.dubaiChocolate}
+      />
     </TouchableOpacity>
-    <TouchableOpacity style={[styles.button, styles.likeButton, { width: size, height: size }]} onPress={onPress}>
-      <MaterialCommunityIcons name="cards-heart-outline" size={50} color={Colors.light.dubaiChocolate} />
-    </TouchableOpacity>
-    </>
   );
 };
 

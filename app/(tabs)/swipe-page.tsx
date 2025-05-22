@@ -1,11 +1,13 @@
+import CardStack, { CardStackHandle, SwipeDirection } from "@/components/swipe-page/card-stack";
 import ClothingCard from "@/components/swipe-page/clothing-card";
 import { SwipeButton } from "@/components/swipe-page/swipe-buttons";
 import { Colors } from "@/constants/Colors";
-import React, { useEffect, useState } from 'react';
+import { supabase } from "@/lib/supabaseClient";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { supabase } from '../../lib/supabaseClient';
 
 type ClothingItem = {
+  id: string;
   name: string;
   image_url: string;
   owner: string;
@@ -13,45 +15,65 @@ type ClothingItem = {
 };
 
 export default function SwipePage() {
-  const [clothingItem, setClothingItem] = useState<ClothingItem | null>(null);
+  const [items, setItems] = useState<ClothingItem[]>([]);
+  const deckRef = useRef<CardStackHandle>(null);
 
   useEffect(() => {
-    const fetchClothingItem = async () => {
+    (async () => {
       const { data, error } = await supabase
-        .from('clothing_images')
-        .select('name, image_url, owner, size')
-        .eq('id', '13bc76eb-c449-4061-9aad-37930354bf71')
-        .single();
+        .from("clothing_images")
+        .select("id, name, image_url, owner, size")
+        .order("created_at", { ascending: false })
+        .limit(30);
 
-      if (error) {
-        console.error('Error fetching clothing item:', error);
-      } else {
-        setClothingItem(data);
-      }
-    };
-
-    fetchClothingItem();
+      if (error) console.error(error);
+      else setItems(data as ClothingItem[]);
+    })();
   }, []);
 
-  if (!clothingItem) {
-    return <Text>Loading...</Text>;
-  }
+  const handleSwipe = (dir: SwipeDirection, item: ClothingItem) => {
+    if (dir === "right") {
+      // e.g. call RPC to mark "liked"
+      console.log("Liked", item.id);
+    } else {
+      console.log("Disliked", item.id);
+    }
+  };
+
+  if (!items.length) return <Text>Loading…</Text>;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>Time to swipe!</Text>
+      <Text style={styles.titleText}>Time to swap some looks!</Text>
 
       <View style={styles.cardContainer}>
-        <ClothingCard 
-          imageUrl={clothingItem.image_url} 
-          name={clothingItem.name} 
-          owner={clothingItem.owner} 
-          size={clothingItem.size} 
+        <CardStack
+          ref={deckRef}
+          data={items}
+          renderCard={(item) => (
+            <ClothingCard
+              imageUrl={item.image_url}
+              name={item.name}
+              owner={item.owner}
+              size={item.size}
+              index={item.index}
+            />
+          )}
+          onSwipe={handleSwipe}
         />
       </View>
 
       <View style={styles.buttonContainer}>
-        <SwipeButton onPress={() => {}} size={85}/>
+        <SwipeButton
+          icon="thumbs-down"
+          onPress={() => deckRef.current?.swipeLeft()}
+          size={85}
+        />
+        <SwipeButton
+          icon="cards-heart-outline"
+          onPress={() => deckRef.current?.swipeRight()}
+          size={85}
+        />
       </View>
     </View>
   );
@@ -72,14 +94,12 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: "80%",
     height: "70%",
-    justifyContent: "center",
-    alignItems: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "center",
     width: "60%",
-    marginTop: -40,
     gap: 40,
+    marginTop: -40,
   },
 });

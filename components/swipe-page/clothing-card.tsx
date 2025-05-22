@@ -2,16 +2,30 @@ import { Colors } from "@/constants/Colors";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 
+ const cardColors = [
+  "yellowFaryd",
+  "dubaiChocolate",
+  "lightPink",
+  "white",
+  "yellowFaryd",
+  "dubaiChocolate",
+  "lightPink",
+ ]
+
 type ClothingCardProps = {
   imageUrl: string;
   name: string;
   owner: string;
   size: string;
+  index?: number;
 };
 
-const ClothingCard = ({ imageUrl, name, owner, size }: ClothingCardProps) => {
+const ClothingCard = ({ imageUrl, name, owner, size, index = 0 }: ClothingCardProps) => {
+  const colorKey = cardColors[index % cardColors.length];
+  const backgroundColor = Colors.light[colorKey as keyof typeof Colors.light];
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor }]}>
       <View style={styles.imageContainer}>
         <Image 
           source={{ uri: imageUrl }} 
@@ -33,7 +47,6 @@ const ClothingCard = ({ imageUrl, name, owner, size }: ClothingCardProps) => {
 const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
-    backgroundColor: Colors.light.yellowFaryd,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
