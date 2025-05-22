@@ -50,7 +50,7 @@ export default function SwipePage() {
     }
   };
 
-  if (!items.length) return <Text>Loading…</Text>;
+  if (!items.length) return <Text style={styles.loadingText}>It looks like you don&apos;t have any items to swap!</Text>;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -103,6 +103,16 @@ const styles = StyleSheet.create({
     color: Colors.light.black,
     marginTop: 50,
     marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: Colors.light.darkPink,
+    marginTop: 50,
+    marginBottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
   },
   cardContainer: {
     width: "80%",
