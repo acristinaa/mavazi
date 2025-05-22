@@ -17,6 +17,7 @@ type ClothingItem = {
 
 export default function SwipePage() {
   const [items, setItems] = useState<ClothingItem[]>([]);
+  const [dislikedItems, setDislikedItems] = useState<ClothingItem[]>([]);
   const deckRef = useRef<CardStackHandle>(null);
 
   useEffect(() => {
@@ -32,12 +33,20 @@ export default function SwipePage() {
     })();
   }, []);
 
-  const handleSwipe = (dir: SwipeDirection, item: ClothingItem) => {
+  const handleSwipe = (dir: SwipeDirection, item: ClothingItem, index: number) => {
     if (dir === "right") {
-      // e.g. call RPC to mark "liked"
       console.log("Liked", item.id);
+      setItems(prev => prev.filter(i => i.id !== item.id));
     } else {
       console.log("Disliked", item.id);
+      setDislikedItems(prev => [...prev, item]);
+      setItems(prev => prev.filter(i => i.id !== item.id));
+    }
+
+    // If we're out of items, add the disliked ones to the end
+    if (items.length === 1) {
+      setItems(prev => [...prev, ...dislikedItems]);
+      setDislikedItems([]);
     }
   };
 
