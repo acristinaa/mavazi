@@ -44,7 +44,7 @@ export default function SwipePage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>Time to swap some looks!</Text>
+      <Text style={styles.titleText}>Time to swap!</Text>
 
       <View style={styles.cardContainer}>
         <CardStack
@@ -88,8 +88,9 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 24,
     fontWeight: "bold",
-    color: Colors.light.dubaiChocolate,
+    color: Colors.light.black,
     marginTop: 50,
+    marginBottom: 20,
   },
   cardContainer: {
     width: "80%",
@@ -100,6 +101,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "60%",
     gap: 40,
-    marginTop: -40,
+    marginTop: -60,
   },
 });

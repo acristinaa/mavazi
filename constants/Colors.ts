@@ -11,6 +11,7 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     darkPurple: "#4a2d6c",
     white: "#FFFFFF",
+    black: "#000000",
     //POWER PUFF GIRLS
     dubaiChocolate: "#C2D168",
     yellowFaryd: "#FEDC78",
@@ -38,6 +39,7 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     darkPurple: "#4a2d6c",
     white: "#FFFFFF",
+    black: "#000000",
     //POWER PUFF GIRLS
     dubaiChocolate: "#C2D168",
     yellowFaryd: "#FEDC78",

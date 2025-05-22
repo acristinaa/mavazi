@@ -27,9 +27,9 @@ export default forwardRef<CardStackHandle, CardStackProps<any>>(function CardSta
 
   const to = (_i: number) => ({
     x: 0,
-    y: _i * -6,
-    scale: 1 - _i * 0.02,
-    rot: -10 + Math.random() * 20,
+    y: 0,
+    scale: 1,
+    rot: 0,
     delay: _i * 50,
   });
   const from = (_i: number) => ({ x: 0, rot: 0, scale: 1, y: SCREEN_WIDTH });
